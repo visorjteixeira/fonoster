@@ -79,25 +79,31 @@ function createCreateContainer(prisma: Prisma, pathToIntegrations: string) {
       throw new ApplicationNotFoundError(appRef);
     }
 
-    const ttsConfig = getTtsConfig(integrations, app as Application);
-    const sttConfig = getSttConfig(integrations, app as Application);
-
-    const tts = TextToSpeechFactory.getEngine(
-      app.textToSpeech.productRef,
-      ttsConfig
-    );
-
-    const stt = SpeechToTextFactory.getEngine(
-      app.speechToText.productRef,
-      sttConfig
-    );
-
     const actualEndpoint =
       app.endpoint === AUTOPILOT_SPECIAL_LOCAL_ADDRESS
         ? AUTOPILOT_INTERNAL_ADDRESS
         : app.endpoint === WELCOME_DEMO_SPECIAL_LOCAL_ADDRESS
           ? `${APISERVER_HOST}:50051`
           : app.endpoint;
+
+    // Get textToSpeech config if its available
+    let tts = null;
+    if (app.textToSpeech) {
+      const ttsConfig = getTtsConfig(integrations, app as Application);
+      tts = TextToSpeechFactory.getEngine(
+        app.textToSpeech.productRef,
+        ttsConfig
+      );
+    }
+    // Get speechToText config if its available
+    let stt = null;
+    if (app.speechToText) {
+      const sttConfig = getSttConfig(integrations, app as Application);
+      stt = SpeechToTextFactory.getEngine(
+        app.speechToText.productRef,
+        sttConfig
+      );
+    }
 
     return {
       ref: appRef,

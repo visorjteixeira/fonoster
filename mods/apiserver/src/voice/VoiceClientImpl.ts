@@ -212,6 +212,7 @@ class VoiceClientImpl implements VoiceClient {
   }
 
   async synthesize(text: string, options: SayOptions): Promise<string> {
+    if (!this.tts) return null;
     const { ref, stream } = await this.tts.synthesize(text, options);
     this.filesServer.addStream(ref, stream);
     return ref;
@@ -219,6 +220,7 @@ class VoiceClientImpl implements VoiceClient {
 
   async transcribe(): Promise<SpeechResult> {
     try {
+      if (!this.stt) return {} as unknown as SpeechResult;
       return await this.stt.transcribe(this.transcriptionsStream);
     } catch (e) {
       logger.warn("transcription error", e);
@@ -230,6 +232,7 @@ class VoiceClientImpl implements VoiceClient {
     callback: (stream: { speech: string; responseTime: number }) => void
   ) {
     try {
+      if (!this.stt) return;
       const out = this.stt.streamTranscribe(this.transcriptionsStream);
       out.on("data", callback);
     } catch (e) {

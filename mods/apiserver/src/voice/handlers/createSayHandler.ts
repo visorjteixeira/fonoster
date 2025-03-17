@@ -49,13 +49,15 @@ function createSayHandler(ari: Client, voiceClient: VoiceClient) {
       request.options ? struct.decode(request.options) : {}
     );
 
-    await ari.channels.play({
-      channelId,
-      media: getMediaUrl(mediaId),
-      playbackId: playbackRef
-    });
+    if (mediaId) {
+      await ari.channels.play({
+        channelId,
+        media: getMediaUrl(mediaId),
+        playbackId: playbackRef
+      });
 
-    await awaitForPlaybackFinished(ari, playbackRef);
+      await awaitForPlaybackFinished(ari, playbackRef);
+    }
 
     voiceClient.sendResponse({
       sayResponse: {
