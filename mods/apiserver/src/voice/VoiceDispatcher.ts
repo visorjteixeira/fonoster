@@ -37,6 +37,7 @@ import {
 } from "./handlers";
 import { AriEvent as AE, ChannelVar, VoiceClient } from "./types";
 import { createGetChannelVarWithoutThrow } from "./utils";
+import { createCallHeadersHandler } from "./handlers/createCallHeadersHandler";
 
 const logger = getLogger({ service: "apiserver", filePath: __filename });
 
@@ -103,6 +104,10 @@ class VoiceDispatcher {
       vc.on(SC.PLAY_REQUEST, createPlayHandler(ari, vc).bind(this));
       vc.on(SC.PLAY_DTMF_REQUEST, createPlayDtmfHandler(ari, vc).bind(this));
       vc.on(SC.SAY_REQUEST, createSayHandler(ari, vc).bind(this));
+      vc.on(
+        SC.CALL_HEADERS_REQUEST,
+        createCallHeadersHandler(ari, vc).bind(this)
+      );
       vc.on(SC.GATHER_REQUEST, createGatherHandler(vc).bind(this));
       vc.on(SC.DIAL_REQUEST, createDialHandler(ari, vc).bind(this));
       vc.on(

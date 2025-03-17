@@ -16,19 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export * from "./Answer";
-export * from "./Dial";
-export * from "./Gather";
-export * from "./Hangup";
-export * from "./Mute";
-export * from "./Play";
-export * from "./PlayDtmf";
-export * from "./PlaybackControl";
-export * from "./Record";
-export * from "./Say";
-export * from "./CallHeaders";
-export * from "./Stream";
-export * from "./StreamGather";
-export * from "./Unmute";
-export * from "./Verb";
-export * from "./validateRequest";
+import { CallHeadersRequest } from "@fonoster/common";
+import { z } from "zod";
+import { Verb } from "./Verb";
+
+class CallHeaders extends Verb<CallHeadersRequest> {
+  getValidationSchema(): z.Schema {
+    return z.object({
+      headers: z.array(z.string())
+    });
+  }
+}
+
+export { CallHeaders };

@@ -16,19 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export * from "./Answer";
-export * from "./Dial";
-export * from "./Gather";
-export * from "./Hangup";
-export * from "./Mute";
-export * from "./Play";
-export * from "./PlayDtmf";
-export * from "./PlaybackControl";
-export * from "./Record";
-export * from "./Say";
-export * from "./CallHeaders";
-export * from "./Stream";
-export * from "./StreamGather";
-export * from "./Unmute";
-export * from "./Verb";
-export * from "./validateRequest";
+
+import { VerbRequest, VerbResponse } from "./Verb";
+
+type CallHeadersOptions = {
+  headers: string[];
+};
+
+type CallHeadersRequest = VerbRequest & CallHeadersOptions;
+
+type CallHeadersResponse = VerbResponse & {
+  headers: Record<string, string>;
+};
+
+export { CallHeadersRequest, CallHeadersOptions, CallHeadersResponse };

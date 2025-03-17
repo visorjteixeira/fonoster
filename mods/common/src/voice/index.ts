@@ -32,6 +32,8 @@ export * from "./Record";
 
 export * from "./Say";
 
+export * from "./CallHeaders";
+
 export * from "./Stream";
 
 export * from "./StreamGather";
