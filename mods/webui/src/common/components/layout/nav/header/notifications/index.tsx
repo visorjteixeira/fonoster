@@ -1,9 +1,7 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
-import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Popover from "@mui/material/Popover";
 import Stack from "@mui/material/Stack";
@@ -20,20 +18,20 @@ import { User } from "@/types/user";
 export type Notification = { id: string; createdAt: Date; read: boolean } & (
   | { type: "new_feature"; description: string }
   | {
-    type: "new_company";
-    author: { name: string; avatar?: string };
-    company: { name: string };
-  }
+      type: "new_company";
+      author: { name: string; avatar?: string };
+      company: { name: string };
+    }
   | {
-    type: "new_job";
-    author: { name: string; avatar?: string };
-    job: { title: string };
-  }
+      type: "new_job";
+      author: { name: string; avatar?: string };
+      job: { title: string };
+    }
   | {
-    type: "welcome";
-    author: { name: string; avatar?: string };
-    job: { title: string };
-  }
+      type: "welcome";
+      author: { name: string; avatar?: string };
+      job: { title: string };
+    }
 );
 
 const notifications = [
@@ -95,28 +93,28 @@ export function NotificationsPopover({
       <NotificationDropdown
         notifications={[
           {
-            id: '1',
+            id: "1",
             isRead: false,
-            message: 'Lorem ipsum dolor sit amet lorem ipsum dolor',
-            timestamp: 'x hours ago'
+            message: "Lorem ipsum dolor sit amet lorem ipsum dolor",
+            timestamp: "x hours ago"
           },
           {
-            id: '2',
+            id: "2",
             isRead: true,
-            message: 'Lorem ipsum dolor sit amet lorem ipsum dolor',
-            timestamp: 'x hours ago'
+            message: "Lorem ipsum dolor sit amet lorem ipsum dolor",
+            timestamp: "x hours ago"
           },
           {
-            id: '3',
+            id: "3",
             isRead: true,
-            message: 'Lorem ipsum dolor sit amet lorem ipsum dolor',
-            timestamp: 'x hours ago'
+            message: "Lorem ipsum dolor sit amet lorem ipsum dolor",
+            timestamp: "x hours ago"
           }
         ]}
         onNotificationClick={onClose}
-        onVisitSiteClick={() => { }}
+        onVisitSiteClick={() => {}}
       />
-    </Popover >
+    </Popover>
   );
 }
 
@@ -165,8 +163,10 @@ function NotificationContent({
         </Avatar>
         <div>
           <Typography variant="heading-small">New feature!</Typography>
-          <Typography variant="body-medium">{notification.description}</Typography>
-          <Typography variant="body-small" sx={{ color: 'text.secondary' }}>
+          <Typography variant="body-medium">
+            {notification.description}
+          </Typography>
+          <Typography variant="body-small" sx={{ color: "text.secondary" }}>
             {dayjs(notification.createdAt).format("MMM D, hh:mm A")}
           </Typography>
         </div>
@@ -185,13 +185,10 @@ function NotificationContent({
             <Typography component="span" variant="heading-small">
               {notification.author.name}
             </Typography>{" "}
-            created{" "}
-            <Link underline="always">
-              {notification.company.name}
-            </Link>{" "}
+            created <Link underline="always">{notification.company.name}</Link>{" "}
             empresa
           </Typography>
-          <Typography variant="body-small" sx={{ color: 'text.secondary' }}>
+          <Typography variant="body-small" sx={{ color: "text.secondary" }}>
             {dayjs(notification.createdAt).format("MMM D, hh:mm A")}
           </Typography>
         </div>
@@ -211,11 +208,9 @@ function NotificationContent({
               {notification.author.name}
             </Typography>{" "}
             agregar nuevo{" "}
-            <Link underline="always">
-              {notification.job.title}
-            </Link>
+            <Link underline="always">{notification.job.title}</Link>
           </Typography>
-          <Typography variant="body-small" sx={{ color: 'text.secondary' }}>
+          <Typography variant="body-small" sx={{ color: "text.secondary" }}>
             {dayjs(notification.createdAt).format("MMM D, hh:mm A")}
           </Typography>
         </div>
@@ -236,7 +231,7 @@ function NotificationContent({
             </Typography>{" "}
             welcomes you to {user.name}
           </Typography>
-          <Typography variant="body-small" sx={{ color: 'text.secondary' }}>
+          <Typography variant="body-small" sx={{ color: "text.secondary" }}>
             {dayjs(notification.createdAt).format("MMM D, hh:mm A")}
           </Typography>
         </div>

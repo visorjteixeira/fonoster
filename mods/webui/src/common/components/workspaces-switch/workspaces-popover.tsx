@@ -71,12 +71,12 @@ export function WorkspacesPopover({
       onClose={onClose}
       open={open}
       sx={{
-        '& .MuiPaper-root': {
-          left: '6% !important',
-          transform: 'translateX(-47%) !important',
-          [theme.breakpoints.up('xs')]: { top: '120px !important' },
-          [theme.breakpoints.up('sm')]: { top: '136px !important' },
-          [theme.breakpoints.up('md')]: { top: '153px !important' }
+        "& .MuiPaper-root": {
+          left: "6% !important",
+          transform: "translateX(-47%) !important",
+          [theme.breakpoints.up("xs")]: { top: "120px !important" },
+          [theme.breakpoints.up("sm")]: { top: "136px !important" },
+          [theme.breakpoints.up("md")]: { top: "153px !important" }
         }
       }}
       slotProps={{
@@ -90,85 +90,93 @@ export function WorkspacesPopover({
             padding: 0,
             backgroundColor: "#FFFFFF",
             borderTop: "none",
-            [theme.breakpoints.up('xs')]: { top: '120px !important' },
-            [theme.breakpoints.up('sm')]: { top: '136px !important' },
-            [theme.breakpoints.up('md')]: { top: '153px !important' }
+            [theme.breakpoints.up("xs")]: { top: "120px !important" },
+            [theme.breakpoints.up("sm")]: { top: "136px !important" },
+            [theme.breakpoints.up("md")]: { top: "153px !important" }
           }
         }
       }}
       transformOrigin={{ horizontal: "left", vertical: "top" }}
     >
-      {workspaces.map((workspace, index) => {
+      {workspaces.flatMap((workspace, index) => {
         const isSelected = selectedWorkspace?.ref === workspace.ref;
 
-        return (
-          <React.Fragment key={workspace.name}>
-            <MenuItem
-              onClick={() => handleWorkspaceChange(workspace)}
-              sx={{
-                py: 2,
-                px: 3,
-                display: "flex",
-                height: '36px',
-                "&:hover": {
-                  backgroundColor: hoverColor
-                }
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-                <Typography
-                  variant="body-medium"
+        const menuItems = [
+          <MenuItem
+            key={`workspace-${workspace.name}`}
+            onClick={() => handleWorkspaceChange(workspace)}
+            sx={{
+              py: 2,
+              px: 3,
+              display: "flex",
+              height: "36px",
+              "&:hover": {
+                backgroundColor: hoverColor
+              }
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
+              <Typography
+                variant="body-medium"
+                sx={{
+                  color: textColor,
+                  fontWeight: 400
+                }}
+              >
+                {workspace.name}
+              </Typography>
+              {isSelected && (
+                <Box
                   sx={{
-                    color: textColor,
-                    fontWeight: 400
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: primaryColor,
+                    ml: 1
                   }}
-                >
-                  {workspace.name}
-                </Typography>
-                {isSelected && (
-                  <Box
-                    sx={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      backgroundColor: primaryColor,
-                      ml: 1
-                    }}
-                  />
-                )}
-              </Box>
-            </MenuItem>
-            {index < workspaces.length - 1 && <Divider sx={{ margin: '0' }} />}
-          </React.Fragment>
-        );
+                />
+              )}
+            </Box>
+          </MenuItem>
+        ];
+
+        if (index < workspaces.length - 1) {
+          menuItems.push(
+            <Divider key={`divider-${workspace.name}`} sx={{ margin: "0" }} />
+          );
+        }
+
+        return menuItems;
       })}
-      <Divider sx={{ margin: '0' }} />
+      <Divider sx={{ margin: "0" }} />
       <MenuItem
         onClick={handleNewWorkspace}
         sx={{
           py: 2,
           px: 3,
           color: secondaryColor,
-          height: '36px',
+          height: "36px",
           "&:hover": {
             backgroundColor: hoverColor
           }
         }}
       >
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          width: '100%',
-          justifyContent: 'space-between',
-          "&:hover": {
-            color: secondaryColor900
-          }
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            justifyContent: "space-between",
+            "&:hover": {
+              color: secondaryColor900
+            }
+          }}
+        >
           <Typography variant="body-medium">New Workspace</Typography>
           <AddOutlinedIcon
             fontSize="small"
             sx={{
-              fontSize: '18px'
+              fontSize: "18px"
             }}
           />
         </Box>

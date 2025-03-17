@@ -22,6 +22,7 @@ import * as ort from "onnxruntime-node";
 import { chunkToFloat32Array } from "../vad/chunkToFloat32Array";
 import { VadParams } from "../vad/types";
 import { SileroVadModel } from "./SileroVadModel";
+import { ONNXRuntimeAPI } from "./types";
 
 const logger = getLogger({ service: "autopilot", filePath: __filename });
 
@@ -38,7 +39,15 @@ async function createVad(params: VadParams) {
 
   const effectivePath =
     pathToModel || join(__dirname, "..", "..", "silero_vad_v5.onnx");
-  const silero = await SileroVadModel.new(ort, effectivePath);
+
+  const ortAdapter: ONNXRuntimeAPI = {
+    InferenceSession: {
+      create: ort.InferenceSession.create.bind(ort.InferenceSession)
+    },
+    Tensor: ort.Tensor as unknown as ONNXRuntimeAPI["Tensor"]
+  };
+
+  const silero = await SileroVadModel.new(ortAdapter, effectivePath);
 
   let sampleBuffer: number[] = [];
   let isSpeechActive = false;
