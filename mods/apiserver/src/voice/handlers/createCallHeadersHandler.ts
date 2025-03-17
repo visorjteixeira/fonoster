@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CallHeadersRequest } from "@fonoster/common";
+import { CallHeadersRequest, CallHeadersResponse } from "@fonoster/common";
 import { Client } from "ari-client";
 import { VoiceClient } from "../types";
 import { withErrorHandling } from "./utils/withErrorHandling";
@@ -25,23 +25,25 @@ function createCallHeadersHandler(ari: Client, voiceClient: VoiceClient) {
   return withErrorHandling(async (request: CallHeadersRequest) => {
     const { sessionRef, headers } = request;
 
-    const callHeaders = {};
+    const callHeaders = {} as CallHeadersResponse["headers"];
 
     for (const header of headers) {
       try {
+        // Initialize the header with an empty string
+        callHeaders[header] = "";
+        // Get the channel variable
         const channelVar = await ari.channels.getChannelVar({
           channelId: sessionRef,
           variable: header
         });
-
-        if (channelVar) {
+        // If the channel variable exists, set the header value
+        if (channelVar?.value) {
           callHeaders[header] = channelVar?.value;
         }
-      } catch (_) {
-        callHeaders[header] = "";
-      }
+      } catch (_) {}
     }
 
+    // Send the call headers response
     voiceClient.sendResponse({
       callHeadersResponse: {
         sessionRef,
