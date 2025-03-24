@@ -34,7 +34,7 @@ function createCallHeadersHandler(ari: Client, voiceClient: VoiceClient) {
         // Get the channel variable
         const channelVar = await ari.channels.getChannelVar({
           channelId: sessionRef,
-          variable: header
+          variable: `PJSIP_HEADER(read,${header})`
         });
         // If the channel variable exists, set the header value
         if (channelVar?.value) {
