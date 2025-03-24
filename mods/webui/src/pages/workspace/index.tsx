@@ -51,10 +51,6 @@ const ListWorkspacePage = () => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    refreshWorkspaces();
-  }, []);
-
   const handleCreateWorkspace = () => {
     setIsCreateModalOpen(true);
   };

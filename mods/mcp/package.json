@@ -1,6 +1,6 @@
 {
   "name": "@fonoster/mcp",
-  "version": "0.9.37",
+  "version": "0.9.49",
   "description": "Model Context Protocol for Fonoster",
   "author": "Pedro Sanders <psanders@fonoster.com>",
   "homepage": "https://github.com/fonoster/fonoster#readme",
@@ -17,12 +17,13 @@
   "scripts": {
     "prebuild": "rimraf ./dist tsconfig.tsbuildinfo",
     "build": "tsc -b tsconfig.json",
+    "postbuild": "chmod +x ./dist/index.js",
     "clean": "rimraf ./dist node_modules tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@fonoster/common": "^0.9.35",
-    "@fonoster/logger": "^0.9.30",
-    "@fonoster/sdk": "^0.9.37",
+    "@fonoster/common": "^0.9.49",
+    "@fonoster/logger": "^0.9.49",
+    "@fonoster/sdk": "^0.9.49",
     "@modelcontextprotocol/sdk": "^1.4.0"
   },
   "files": [
