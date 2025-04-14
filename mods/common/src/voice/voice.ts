@@ -76,7 +76,7 @@ enum StreamContent {
   START_STREAM_GATHER_RESPONSE = "startStreamGatherResponse",
   STOP_STREAM_GATHER_REQUEST = "stopStreamGatherRequest",
   STOP_STREAM_GATHER_RESPONSE = "stopStreamGatherResponse",
-  STREAM_GATHER_PAYLOAD = "streamGatherPayload",
+  STREAM_GATHER_PAYLOAD = "streamGatherPayload"
 }
 
 type VoiceClientConfig = {

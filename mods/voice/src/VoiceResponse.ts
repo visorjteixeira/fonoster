@@ -30,8 +30,6 @@ import {
   RecordResponse,
   SayOptions,
   SayResponse,
-  CallHeadersOptions,
-  CallHeadersResponse,
   StreamEvent,
   StreamGatherOptions,
   StreamOptions,
@@ -59,7 +57,6 @@ import {
   Stream,
   StreamGatherStream,
   Unmute,
-  CallHeaders
 } from "./verbs";
 
 /**
@@ -455,29 +452,6 @@ class VoiceResponse {
       sessionRef: this.request.sessionRef,
       direction
     });
-  }
-
-  /**
-   * Get the call headers.
-   *
-   * @param {CallHeadersOptions} options - Options to control the call headers operation
-   * @return {Promise<CallHeadersResponse>} The call headers response
-   * @example
-   *
-   * async function handler (request, response) {
-   *   await response.answer();
-   *   const headers = await response.getCallHeaders({ headers: ["X-Fonoster-Call-Id", "X-Fonoster-User-Id"] });
-   * }
-   */
-  async getCallHeaders(
-    options: CallHeadersOptions
-  ): Promise<CallHeadersResponse> {
-    const response = await new CallHeaders(this.request, this.voice).run({
-      sessionRef: this.request.sessionRef,
-      ...options
-    });
-
-    return response.callHeadersResponse;
   }
 
   /**
