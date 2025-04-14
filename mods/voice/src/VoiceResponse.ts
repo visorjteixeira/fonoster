@@ -56,7 +56,7 @@ import {
   StopStreamGather,
   Stream,
   StreamGatherStream,
-  Unmute,
+  Unmute
 } from "./verbs";
 
 /**
