@@ -92,7 +92,7 @@ async function main(request) {
   const apiSecret = "your-api-secret"
   const accessKeyId = "WO00000000000000000000000000000000";
 
-  const client = SDK.Client({ accessKeyId });
+  const client = new SDK.Client({ accessKeyId });
   await client.loginWithApiKey(apiKey, apiSecret);
 
   const calls = new SDK.Calls(client);
@@ -104,7 +104,12 @@ async function main(request) {
 const request = {
   from: "+18287854037",
   to: "+17853178070",
-  appRef: "3e61ecb7-a1b6-4a93-84c3-4f1979165bca"
+  appRef: "3e61ecb7-a1b6-4a93-84c3-4f1979165bca",
+  // Optional metadata to be sent to the Voice Application
+  metadata: {
+    name: "John Doe",
+    message: "Please call me back."
+  }
 };
 
 main(request).catch(console.error);
@@ -160,17 +165,17 @@ For contributing, please see the following links:
         </a>
     </td>
     <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
-        <a href=https://github.com/obrucheoghene>
-            <img src=https://avatars.githubusercontent.com/u/111436934?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Obruche Wilfred  Oghenechohwo/>
-            <br />
-            <sub style="font-size:14px"><b>Obruche Wilfred  Oghenechohwo</b></sub>
-        </a>
-    </td>
-    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
         <a href=https://github.com/whernandez>
             <img src=https://avatars.githubusercontent.com/u/37089069?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Wandy Hernandez/>
             <br />
             <sub style="font-size:14px"><b>Wandy Hernandez</b></sub>
+        </a>
+    </td>
+    <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">
+        <a href=https://github.com/obrucheoghene>
+            <img src=https://avatars.githubusercontent.com/u/111436934?v=4 width="100;"  style="border-radius:50%;align-items:center;justify-content:center;overflow:hidden;padding-top:10px" alt=Obruche Wilfred  Oghenechohwo/>
+            <br />
+            <sub style="font-size:14px"><b>Obruche Wilfred  Oghenechohwo</b></sub>
         </a>
     </td>
     <td align="center" style="word-wrap: break-word; width: 150.0; height: 150.0">

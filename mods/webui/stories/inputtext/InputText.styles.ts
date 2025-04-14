@@ -27,7 +27,8 @@ export const StyledTextField = styled(TextField)(({ theme, size }) => ({
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
     lineHeight: "normal",
-    letterSpacing: "0.12px"
+    letterSpacing: "0.12px",
+    backgroundColor: "transparent",
   },
   "& .MuiFormLabel-root.MuiInputLabel-root.Mui-focused": {
     color: theme.palette.primary.main,
@@ -47,6 +48,7 @@ export const StyledTextField = styled(TextField)(({ theme, size }) => ({
     paddingLeft: "0"
   },
   "& .MuiInputBase-root.MuiOutlinedInput-root": {
+    backgroundColor: "transparent",
     "& .MuiInputAdornment-root": {
       marginRight: 4,
       "&.MuiInputAdornment-positionEnd": {
@@ -55,7 +57,7 @@ export const StyledTextField = styled(TextField)(({ theme, size }) => ({
     }
   },
   "& .MuiInputAdornment-root": {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   "& .MuiOutlinedInput-root": {
     "& .MuiOutlinedInput-notchedOutline": {
@@ -76,7 +78,7 @@ export const StyledTextField = styled(TextField)(({ theme, size }) => ({
     lineHeight: "normal",
     letterSpacing: "0.12px",
     marginTop: "8px",
-    color: theme.palette.text.primary
+    color: theme.palette.text.secondary
   },
   "& .MuiFormLabel-root.MuiInputLabel-root:not(.MuiInputLabel-shrink)": {
     fontFamily: "'Poppins', sans-serif",

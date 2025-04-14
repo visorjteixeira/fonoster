@@ -24,6 +24,7 @@ import {
   ListCallsRequest,
   ListCallsResponse
 } from "@fonoster/types";
+import { Struct } from "google-protobuf/google/protobuf/struct_pb";
 import { makeRpcRequest } from "./client/makeRpcRequest";
 import { DataResponse, FonosterClient } from "./client/types";
 import {
@@ -97,6 +98,7 @@ class Calls {
    * @param {string} request.to - The number that received the call
    * @param {string} request.appRef - The reference of the App that will handle the call
    * @param {number} request.timeout - The time in seconds to wait for the call to be answered. Default is 60 seconds
+   * @param {Record<string, string>} request.metadata - Optional metadata to be sent to the App. For Autopilot applications, this is added to the context of the conversation.
    * @return {{ref: string, statusStream: AsyncGenerator<{ status: DialStatus }>}} - The response object that contains the Call reference and a stream of status updates
    * @see DialStatus
    * @example
@@ -106,7 +108,11 @@ class Calls {
    *   from: "+18287854037",
    *   to: "+17853178070",
    *   appRef: "00000000-0000-0000-0000-000000000000",
-   *   timeout: 30
+   *   timeout: 30,
+   *   metadata: {
+   *     "name": "John Doe",
+   *     "preferredLanguage": "en-US"
+   *   }
    * };
    *
    * const response = await calls.createCall(request);
@@ -133,7 +139,13 @@ class Calls {
       method: client.createCall.bind(client),
       requestPBObjectConstructor: CreateCallRequestPB,
       metadata: this.client.getMetadata(),
-      request
+      request: {
+        ...request,
+        metadata: Struct.fromJavaScript(request.metadata) as unknown as Record<
+          string,
+          unknown
+        >
+      }
     });
 
     const trackCallRequest = new TrackCallRequestPB();

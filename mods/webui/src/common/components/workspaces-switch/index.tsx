@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@stories/typography/Typography";
-import CircularProgress from "@mui/material/CircularProgress";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import { usePopover } from "@/common/hooks/use-popover";
@@ -49,7 +48,6 @@ export function WorkspacesSwitch(): React.JSX.Element {
           height: "40px"
         }}
       >
-        <CircularProgress size={24} color="primary" />
         <Box sx={{ flex: "1 1 auto" }}>
           <Typography
             color="var(--Workspaces-title-color)"
@@ -76,12 +74,12 @@ export function WorkspacesSwitch(): React.JSX.Element {
         ref={popover.anchorRef}
         spacing={2}
         sx={{
+          width: "100%",
           alignItems: "center",
-          border: "1px solid var(--Workspaces-border-color)",
-          borderRadius: "12px",
           cursor: "pointer",
-          p: "2px 2px 4px 23px",
-          height: "40px"
+          padding: "12px 12px 12px 40px",
+          minHeight: "42px",
+          margin: "0"
         }}
       >
         <Box sx={{ flex: "1 1 auto" }}>
@@ -94,6 +92,12 @@ export function WorkspacesSwitch(): React.JSX.Element {
           <Typography
             color="var(--Workspaces-name-color)"
             variant="body-medium"
+            style={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              WebkitLineClamp: 1
+            }}
           >
             {selectedWorkspace?.name}
           </Typography>

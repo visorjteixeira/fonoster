@@ -31,9 +31,9 @@ type TypographyVariant =
   | "drawer-title"
   | "drawer-label";
 
-type TypographyProps = {
+interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   variant?: TypographyVariant;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   color?: string;
   [key: string]: any;
 };

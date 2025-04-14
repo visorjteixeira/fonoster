@@ -4,12 +4,11 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import { Typography } from "@stories/typography/Typography";
 import { ArrowSquareOut as ArrowSquareOutIcon } from "@phosphor-icons/react/dist/ssr/ArrowSquareOut";
 import { CaretDown as CaretDownIcon } from "@phosphor-icons/react/dist/ssr/CaretDown";
-import { CaretRight as CaretRightIcon } from "@phosphor-icons/react/dist/ssr/CaretRight";
+import { CaretUp as CaretUpIcon } from "@phosphor-icons/react/dist/ssr/CaretUp";
 
 import type { NavItemConfig } from "@/types/layout";
 import { isNavItemActive } from "@/utils/is-nav-item-active";
@@ -30,36 +29,32 @@ export function Sidebar(): React.JSX.Element {
     <Box
       sx={{
         bgcolor: "var(--SideNav-background)",
-        borderRight: "1px solid #E0E0E0",
-        boxShadow: "0.5px 0 2px rgba(0, 0, 0, 0.05)",
+        borderRight: "1px solid #E8E8E8",
         color: "var(--SideNav-color)",
         display: { xs: "none", lg: "flex" },
         flexDirection: "column",
         height: "calc(100vh - var(--MainNav-height))",
-        width: "var(--SideNav-width)",
+        minWidth: "var(--SideNav-width)",
         position: "sticky",
         top: "var(--MainNav-height)"
       }}
     >
-      <Stack spacing={2} sx={{ p: 2 }}>
-        <WorkspacesSwitch />
-      </Stack>
-      <Divider />
+      <WorkspacesSwitch />
       <Box
         component="nav"
         sx={{
           flex: "1 1 auto",
           overflowY: "auto",
-          p: 2,
+          paddingTop: "8px",
           scrollbarWidth: "none",
           "&::-webkit-scrollbar": { display: "none" }
         }}
       >
         {renderNavGroups({ items, pathname: currentPath })}
       </Box>
-      <Stack spacing={2} sx={{ p: 2 }}>
-        <Typography variant="mono-small">
-          &copy; 2024, FONOSTER. V0.3.4
+      <Stack spacing={2} sx={{ padding: "10px", paddingLeft: "40px" }}>
+        <Typography variant="mono-small" color="var(--SideNav-footer-color)">
+          &copy; {new Date().getFullYear()}, FONOSTER. V0.3.4
         </Typography>
       </Stack>
     </Box>
@@ -76,7 +71,7 @@ function renderNavGroups({
   const children = items.reduce(
     (acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
       acc.push(
-        <Stack component="li" key={curr.key} spacing={1.5}>
+        <Stack component="li" key={curr.key}>
           {curr.title ? (
             <div>
               <Typography variant="drawer-label">{curr.title}</Typography>
@@ -92,7 +87,7 @@ function renderNavGroups({
   );
 
   return (
-    <Stack component="ul" spacing={2} sx={{ listStyle: "none", m: 0, p: 0 }}>
+    <Stack component="ul" sx={{ listStyle: "none", margin: 0, padding: 0 }}>
       {children}
     </Stack>
   );
@@ -158,8 +153,7 @@ function renderNavItems({
     <Stack
       component="ul"
       data-depth={depth}
-      spacing={1}
-      sx={{ listStyle: "none", m: 0, p: 0 }}
+      sx={{ listStyle: "none", margin: 0, padding: 0 }}
     >
       {children}
     </Stack>
@@ -203,7 +197,7 @@ function NavItem({
     pathname
   });
   const Icon = icon ? icons[icon] : null;
-  const ExpandIcon = open ? CaretDownIcon : CaretRightIcon;
+  const ExpandIcon = open ? CaretUpIcon : CaretDownIcon;
   const isBranch = children && !href;
   const showChildren = Boolean(children && open);
 
@@ -234,24 +228,20 @@ function NavItem({
             })}
         sx={{
           alignItems: "center",
-          borderRadius: 1,
           color: "var(--NavItem-color)",
           cursor: "pointer",
           display: "flex",
           flex: "0 0 auto",
           gap: 1,
-          p: "6px 16px",
+          padding: "6px 16px 6px 40px",
           position: "relative",
           textDecoration: "none",
           whiteSpace: "nowrap",
-          transition: "all 0.2s ease-in-out",
           ...(disabled && {
-            bgcolor: "var(--NavItem-disabled-background)",
             color: "var(--NavItem-disabled-color)",
             cursor: "not-allowed"
           }),
           ...(active && {
-            bgcolor: "var(--NavItem-active-background)",
             color: "var(--NavItem-active-color)",
             ...(depth > 0 && {
               "&::before": {
@@ -269,24 +259,21 @@ function NavItem({
           "&:hover": {
             ...(!disabled &&
               !active && {
-                bgcolor: "#00ab5514",
-                color: "var(--NavItem-hover-color)",
-                transform: "translateX(4px)",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+                color: "var(--NavItem-hover-color)"
               })
           }
         }}
         tabIndex={0}
       >
-        <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            justifyContent: "center",
-            flex: "0 0 auto"
-          }}
-        >
-          {Icon ? (
+        {Icon ? (
+          <Box
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              justifyContent: "center",
+              flex: "0 0 auto"
+            }}
+          >
             <Icon
               fill={
                 active
@@ -296,18 +283,18 @@ function NavItem({
               fontSize="var(--icon-fontSize-md)"
               weight={forceOpen || active ? "fill" : undefined}
             />
-          ) : null}
-        </Box>
+          </Box>
+        ) : null}
         <Box sx={{ flex: "1 1 auto" }}>
           <Typography component="span" variant="drawer-label">
             {title}
             {active && (
               <Box
                 sx={{
-                  width: "8px",
-                  height: "8px",
+                  width: "6px",
+                  height: "6px",
                   borderRadius: "50%",
-                  backgroundColor: "#00ab55",
+                  backgroundColor: "#39E19E",
                   display: "inline-block",
                   marginLeft: "8px"
                 }}
@@ -334,11 +321,11 @@ function NavItem({
         ) : null}
       </Box>
       {showChildren ? (
-        <Box sx={{ pl: "24px" }}>
+        <Box>
           <Box
             sx={{
               borderLeft: "1px solid var(--NavItem-children-border)",
-              pl: "12px"
+              pl: "16px"
             }}
           >
             {children}

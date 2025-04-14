@@ -26,6 +26,7 @@ MCP Server for the Fonoster API, enabling MCP clients to interact with Fonoster'
      - `from` (string): The number to call from
      - `to` (string): The number to call to
      - `app_ref` (string): The reference to the application to use for the call
+     - `metadata` (object): Metadata to be sent to the application
    - Returns: Call creation confirmation with reference ID
 
 4. `create_call_batch`
@@ -34,13 +35,14 @@ MCP Server for the Fonoster API, enabling MCP clients to interact with Fonoster'
      - `from` (string): The number to call from
      - `to_array` (array): The numbers to call to
      - `app_ref` (string): The reference to the application to use for the call
+     - `metadata` (object): Metadata to be sent to the application
    - Returns: Batch creation confirmation with reference ID
 
 ## Prompts
 
 1. `create_call_prompt`
    - A prompt for creating a call step by step
-   - Guides Claude through the process of:
+   - Guides an MCP client through the process of:
      - Asking the user for the number or numbers to call if not already provided
      - Offering a list of available numbers using the `list_numbers` tool
      - Asking for the application name and finding its reference
@@ -51,6 +53,8 @@ MCP Server for the Fonoster API, enabling MCP clients to interact with Fonoster'
 ### Usage with Claude Desktop
 
 Add the following to your `claude_desktop_config.json`:
+
+> If you are logged in to the command-line tool, simply run `fonoster mcp:configure --client claude` to configure the server.
 
 #### npx
 

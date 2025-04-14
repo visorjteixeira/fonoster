@@ -1,15 +1,16 @@
 import { ReactNode } from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, useTheme } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
-import ReactTable from "@/common/contexts/table/ReactTable";
+import ReactTable from "@stories/table/ReactTable";
 import { FormProvider, UseFormReturn } from "react-hook-form";
 import { LinkBackTo } from "@stories/linkbackto/LinkBackTo";
 import { Typography } from "@stories/typography/Typography";
 import React from "react";
-import { TableOptions } from "@/common/contexts/table/TableComponent";
+import { TableOptions } from "@stories/table/TableComponent";
 
-interface PageContainerProps {
+interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
+  variant?: "form" | "default";
 }
 
 interface HeaderProps {
@@ -33,6 +34,7 @@ interface ContentProps<T extends object> {
   showSearch?: boolean;
   showPagination?: boolean;
   showSelectAll?: boolean;
+  onRowSelection?: (row: T) => void;
   options?: TableOptions;
 }
 
@@ -42,13 +44,43 @@ interface ContentFormProps<T extends object> {
   methods: UseFormReturn<T>;
 }
 
-function PageContainer({ children }: PageContainerProps) {
-  return <Box sx={{ mb: 6 }}>{children}</Box>;
+function PageContainer({ variant, ...props }: PageContainerProps) {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        paddingTop: { xs: "24px", sm: "44px", md: "64px" },
+        background:
+          variant === "form" ? theme.palette.secondary["50"] : "white",
+        paddingLeft: {
+          xs: "24px",
+          sm: "44px",
+          md: "64px",
+          lg: "150px"
+        },
+        paddingRight: {
+          xs: "24px",
+          sm: "44px",
+          md: "64px",
+          lg: "150px"
+        },
+        width: "100%",
+        minHeight: "100%"
+      }}
+      {...props}
+    />
+  );
 }
 
 function Header({ title, actions, backTo }: HeaderProps) {
+  const theme = useTheme();
+
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ mb: 0.5 }}>
       {backTo && (
         <Box sx={{ mb: 1.5 }}>
           <LinkBackTo label={backTo.label} onClick={backTo.onClick} />
@@ -61,7 +93,14 @@ function Header({ title, actions, backTo }: HeaderProps) {
           alignItems: "center"
         }}
       >
-        <Typography variant="heading-medium">{title}</Typography>
+        <Typography
+          variant="heading-medium"
+          style={{
+            color: theme.palette.text.secondary
+          }}
+        >
+          {title}
+        </Typography>
         {actions}
       </Box>
     </Box>
@@ -70,7 +109,7 @@ function Header({ title, actions, backTo }: HeaderProps) {
 
 function Subheader({ children }: DescriptionProps) {
   return (
-    <Typography variant="body-medium" sx={{ mb: 8 }}>
+    <Typography variant="body-small" sx={{ mb: 8, maxWidth: "400px" }}>
       {children}
     </Typography>
   );
@@ -83,28 +122,37 @@ function ContentTable<T extends object>({
   showFilters = true,
   showSearch = true,
   showPagination = true,
-  showSelectAll = true,
+  showSelectAll = false,
+  onRowSelection,
   options
 }: ContentProps<T>) {
   return (
-    <ReactTable<T>
-      columns={columns}
-      enableRowSelection={options?.enableRowSelection}
-    >
+    <ReactTable<T> columns={columns} enableRowSelection={showSelectAll}>
       <ReactTable.Header>
-        {showSelectAll && <ReactTable.Header.SelectAll />}
-        {showFilters && <ReactTable.Header.Filter />}
+        {showSelectAll && (
+          <Stack sx={{ bgcolor: "secondary.50" }}>
+            <ReactTable.Header.SelectAll />
+          </Stack>
+        )}
+        {showFilters && (
+          <Stack sx={{ bgcolor: "secondary.50" }}>
+            <ReactTable.Header.Filter />
+          </Stack>
+        )}
         {showSearch && (
-          <ReactTable.Header.Search
-            value={""}
-            onChange={() => {}}
-            placeholder="Search..."
-          />
+          <Stack sx={{ bgcolor: "secondary.50" }}>
+            <ReactTable.Header.Search />
+          </Stack>
         )}
         {showPagination && <ReactTable.Header.Pagination />}
       </ReactTable.Header>
       <Box sx={{ mb: 0, mt: 1 }} />
-      <ReactTable.Content id={tableId} options={options} />
+      <ReactTable.Content
+        id={tableId}
+        options={options}
+        enableRowSelection={showSelectAll}
+        onRowSelection={onRowSelection}
+      />
       {children}
     </ReactTable>
   );

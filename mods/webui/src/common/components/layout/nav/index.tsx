@@ -28,10 +28,31 @@ export function SecuredLayout({
           body: {
             "--MainNav-height": "80px",
             "--MainNav-zIndex": 1000,
-            "--SideNav-width": "280px",
+            "--SideNav-width": "250px",
+            "--SideNav-footer-color": theme.palette.secondary["500"],
             "--SideNav-zIndex": 1100,
             "--MobileNav-width": "320px",
             "--MobileNav-zIndex": 1100,
+            "--MobileNav-background": "var(--mui-palette-neutral-950)",
+            "--MobileNav-color": "var(--mui-palette-common-white)",
+            "--NavGroup-title-color": "var(--mui-palette-neutral-400)",
+            "--NavItem-color": theme.palette.secondary["700"],
+            "--NavItem-hover-background": "rgba(255, 255, 255, 0.04)",
+            "--NavItem-active-background": "var(--mui-palette-primary-main)",
+            "--NavItem-active-color": theme.palette.secondary["900"],
+            "--NavItem-disabled-color": "var(--mui-palette-neutral-500)",
+            "--NavItem-icon-color": "var(--mui-palette-neutral-400)",
+            "--NavItem-icon-active-color":
+              "var(--mui-palette-primary-contrastText)",
+            "--NavItem-icon-disabled-color": "var(--mui-palette-neutral-600)",
+            "--NavItem-expand-color": "var(--mui-palette-neutral-400)",
+            "--NavItem-children-border": "var(--mui-palette-neutral-700)",
+            "--NavItem-children-indicator": "var(--mui-palette-neutral-400)",
+            "--Workspaces-background": "var(--mui-palette-neutral-950)",
+            "--Workspaces-border-color": "var(--mui-palette-neutral-700)",
+            "--Workspaces-title-color": theme.palette.secondary["500"],
+            "--Workspaces-name-color": theme.palette.secondary["700"],
+            "--Workspaces-expand-color": theme.palette.secondary["700"],
             margin: 0,
             padding: 0,
             overflowX: "hidden"
@@ -96,15 +117,7 @@ export function SecuredLayout({
           {showSidebar && (
             <>
               <MobileSidebar open={openNav} onClose={() => setOpenNav(false)} />
-              <DesktopSidebar
-                sx={{
-                  height: "100%",
-                  overflow: "hidden",
-                  position: { lg: "fixed" },
-                  top: { lg: "var(--MainNav-height)" },
-                  bottom: { lg: 0 }
-                }}
-              />
+              <DesktopSidebar />
             </>
           )}
           <Box
@@ -138,7 +151,7 @@ export function SecuredLayout({
                   padding: 0,
                   margin: 0
                 },
-                bgcolor: theme.palette.grey[50]
+                bgcolor: theme.palette.primary["50"]
               }}
             >
               <Box
@@ -146,19 +159,6 @@ export function SecuredLayout({
                   flex: 1,
                   display: "flex",
                   flexDirection: "column",
-                  marginTop: { xs: "24px", sm: "44px", md: "64px" },
-                  marginLeft: {
-                    xs: "24px",
-                    sm: "44px",
-                    md: "64px",
-                    lg: "150px"
-                  },
-                  marginRight: {
-                    xs: "24px",
-                    sm: "44px",
-                    md: "64px",
-                    lg: "150px"
-                  },
                   width: "100%"
                 }}
               >
