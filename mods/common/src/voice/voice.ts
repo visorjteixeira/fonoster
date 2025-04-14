@@ -25,7 +25,6 @@ import { PlayRequest, PlayResponse } from "./Play";
 import { PlayDtmfRequest } from "./PlayDtmf";
 import { RecordRequest, RecordResponse } from "./Record";
 import { SayRequest, SayResponse } from "./Say";
-import { CallHeadersRequest, CallHeadersResponse } from "./CallHeaders";
 import {
   StartStreamRequest,
   StartStreamResponse,
@@ -78,8 +77,6 @@ enum StreamContent {
   STOP_STREAM_GATHER_REQUEST = "stopStreamGatherRequest",
   STOP_STREAM_GATHER_RESPONSE = "stopStreamGatherResponse",
   STREAM_GATHER_PAYLOAD = "streamGatherPayload",
-  CALL_HEADERS_REQUEST = "callHeadersRequest",
-  CALL_HEADERS_RESPONSE = "callHeadersResponse"
 }
 
 type VoiceClientConfig = {
@@ -114,7 +111,6 @@ type VoiceIn = {
   streamGatherPayload?: StreamGatherPayload;
   startStreamGatherResponse?: VerbResponse;
   stopStreamGatherResponse?: VerbResponse;
-  callHeadersResponse?: CallHeadersResponse;
 };
 
 type VoiceOut = {
@@ -134,7 +130,6 @@ type VoiceOut = {
   streamPayload?: StreamPayload;
   startStreamGatherRequest?: StartStreamGatherRequest;
   stopStreamGatherRequest?: VerbRequest;
-  callHeadersRequest?: CallHeadersRequest;
 };
 
 type BaseVoiceStream<T, W> = {

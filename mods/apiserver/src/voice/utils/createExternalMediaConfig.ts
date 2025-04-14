@@ -28,6 +28,7 @@ function createExternalMediaConfig(port: number) {
     transport: "tcp",
     data: uuidv4(),
     encapsulation: "audiosocket",
+    direction: "both",
     variables: {
       FROM_EXTERNAL_MEDIA: "true"
     }

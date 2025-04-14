@@ -32,6 +32,18 @@ function transcribeOnConnection(stream: Stream) {
       .onError((err) => {
         logger.error("stream error:", err);
       });
+
+    stream.on(
+      "response_audio",
+      ((audioBase64: string) => {
+        try {
+          const audioBuffer = Buffer.from(audioBase64, "base64");
+          res.write(audioBuffer);
+        } catch (error) {
+          logger.error("Error writing audio123 buffer:", error);
+        }
+      }).bind(this)
+    );
   };
 }
 

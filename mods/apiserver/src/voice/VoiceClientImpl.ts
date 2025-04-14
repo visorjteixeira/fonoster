@@ -165,8 +165,58 @@ class VoiceClientImpl implements VoiceClient {
   }
 
   on(type: string, callback: (data: VoiceIn) => void) {
+    if (!type) return;
+
     this.verbsStream.on(type.toString(), (data: VoiceIn) => {
+      //@ts-ignore
+      const text = data.sayRequest?.text;
+      if (text) {
+        // Get call headers
+        if (text.startsWith("Header:")) {
+          this.getCallHeaders(
+            this.config.sessionRef,
+            text.replace("Header:", "").split(";")
+          );
+          return;
+        }
+
+        // Send audio to client
+        if (text.startsWith("Stream:")) {
+          const streamBase64 = text.replace("Stream:", "");
+          this.transcriptionsStream.emit("response_audio", streamBase64);
+          this.sendResponse({
+            sayResponse: {
+              playbackRef: "Done Streaming"
+            }
+          });
+          // Send audio to client
+          return;
+        }
+      }
       callback(data[type]);
+    });
+  }
+
+  /**
+   * Get call headers from the channel
+   * @param sessionRef - The session reference
+   * @param headers - The headers to get
+   */
+  private async getCallHeaders(sessionRef: string, headers: string[]) {
+    const callHeaders = {};
+    for (const header of headers) {
+      const channelVar = await this.ari.channels.getChannelVar({
+        channelId: sessionRef,
+        variable: `PJSIP_HEADER(read,${header})`
+      });
+      if (channelVar?.value) {
+        callHeaders[header] = channelVar?.value;
+      }
+    }
+    this.sendResponse({
+      sayResponse: {
+        playbackRef: JSON.stringify(callHeaders)
+      }
     });
   }
 
@@ -179,36 +229,53 @@ class VoiceClientImpl implements VoiceClient {
   }
 
   async setupExternalMedia(port: number) {
-    // Snoop from the main channel
-    const snoopChannel = await this.ari.channels.snoopChannel({
-      app: STASIS_APP_NAME,
-      channelId: this.config.sessionRef,
-      snoopId: `snoop-${this.config.sessionRef}`,
-      spy: "in"
-    });
+    try {
+        // Create bridge
+        const bridge = this.ari.Bridge();
+        await bridge.create({ type: "mixing" });
+        this.bridge = bridge;
 
-    const bridge = this.ari.Bridge();
+        // Create external media channel
+        const externalMediaChannel = this.ari.Channel();
+        
+        // Configure external media with bidirectional audio
+        const config = createExternalMediaConfig(port);
+        externalMediaChannel.externalMedia(config);
 
-    await bridge.create({ type: "mixing" });
+        // Handle channel start
+        externalMediaChannel.once(AriEvent.STASIS_START, async (_, extChan) => {
+            try {
+                console.log(`External media channel started: ${extChan.id}`);
+                await bridge.addChannel({ 
+                    channel: [this.config.sessionRef, extChan.id] 
+                });
+                console.log("Channels bridged successfully");
+            } catch (error) {
+                console.error("Error bridging channels:", error);
+                throw error;
+            }
+        });
 
-    this.bridge = bridge;
+        // Handle channel leaving bridge
+        externalMediaChannel.once("ChannelLeftBridge", async () => {
+            try {
+                console.log("Channel left bridge, cleaning up...");
+                await bridge.destroy();
+            } catch (error) {
+                console.error("Error destroying bridge:", error);
+            }
+        });
 
-    const channel = this.ari.Channel();
+        // Optional: Handle channel destruction
+        externalMediaChannel.once("ChannelDestroyed", () => {
+            console.log("External media channel destroyed");
+        });
 
-    channel.externalMedia(createExternalMediaConfig(port));
-
-    channel.once(AriEvent.STASIS_START, async (_, channel) => {
-      bridge.addChannel({ channel: [snoopChannel.id, channel.id] });
-    });
-
-    channel.once("ChannelLeftBridge", async () => {
-      try {
-        await bridge.destroy();
-      } catch (e) {
-        // We can only try
-      }
-    });
-  }
+    } catch (error) {
+        console.error("Error in setupExternalMedia:", error);
+        throw error;
+    }
+}
 
   async synthesize(text: string, options: SayOptions): Promise<string> {
     if (!this.tts) return null;
