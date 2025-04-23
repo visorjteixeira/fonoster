@@ -48,6 +48,7 @@ import {
 } from "./types";
 import { createExternalMediaConfig } from "./utils/createExternalMediaConfig";
 import { VoiceServiceClientConstructor } from "./utils/VoiceServiceClientConstructor";
+import { awaitForRecordingFinished } from "./handlers/utils/awaitForRecordingFinished";
 
 const logger = getLogger({ service: "apiserver", filePath: __filename });
 
