@@ -20,8 +20,8 @@ import { Stream } from "stream";
 import { AuthzClient } from "@fonoster/authz";
 import {
   GrpcError,
+  RecordFormat,
   SayOptions,
-  STASIS_APP_NAME,
   StreamEvent,
   VoiceClientConfig,
   VoiceIn,
@@ -189,12 +189,58 @@ class VoiceClientImpl implements VoiceClient {
               playbackRef: "Done Streaming"
             }
           });
-          // Send audio to client
+          return;
+        }
+
+        // Record audio
+        if (text.startsWith("Record:")) {
+          const data = JSON.parse(text.replace("Record:", ""));
+          this.startRecording(
+            this.config.sessionRef,
+            data.name,
+            data.maxDuration,
+            data.maxSilence
+          );
           return;
         }
       }
       callback(data[type]);
     });
+  }
+
+  private async startRecording(
+    sessionRef: string,
+    name: string,
+    maxDuration: number,
+    maxSilence: number
+  ) {
+    await this.ari.channels.record({
+      channelId: sessionRef,
+      format: RecordFormat.WAV,
+      name,
+      beep: false,
+      maxDurationSeconds: maxDuration,
+      maxSilenceSeconds: maxSilence
+    });
+
+    awaitForRecordingFinished(this.ari, name)
+      .then(({ duration }) => {
+        this.sendResponse({
+          sayResponse: {
+            playbackRef: JSON.stringify({
+              duration,
+              name
+            })
+          }
+        });
+      })
+      .catch(() => {
+        this.sendResponse({
+          sayResponse: {
+            playbackRef: "Recording failed"
+          }
+        });
+      });
   }
 
   /**
