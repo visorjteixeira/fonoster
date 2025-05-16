@@ -174,9 +174,17 @@ class VoiceClientImpl implements VoiceClient {
       if (text) {
         // Get call headers
         if (text.startsWith("Header:")) {
+          // Remove the Header: prefix and split the string by ;
+          const listOfHeaders = text
+            .replace("Header:", "")
+            .split(";")
+            .map((header) => header.trim())
+            .filter(Boolean);
+
+          // Get the call headers
           this.getCallHeaders(
             this.config.sessionRef,
-            text.replace("Header:", "").split(";")
+            listOfHeaders
           );
           return;
         }
@@ -251,6 +259,16 @@ class VoiceClientImpl implements VoiceClient {
    */
   private async getCallHeaders(sessionRef: string, headers: string[]) {
     const callHeaders = {};
+    // If no headers are found, send a message to the client
+    if (headers.length === 0) {
+      this.sendResponse({
+        sayResponse: {
+          playbackRef: "No headers found"
+        }
+      });
+      return;
+    }
+    // Get the call headers
     for (const header of headers) {
       const channelVar = await this.ari.channels.getChannelVar({
         channelId: sessionRef,
@@ -260,6 +278,7 @@ class VoiceClientImpl implements VoiceClient {
         callHeaders[header] = channelVar?.value;
       }
     }
+    // Send the call headers to the client
     this.sendResponse({
       sayResponse: {
         playbackRef: JSON.stringify(callHeaders)
