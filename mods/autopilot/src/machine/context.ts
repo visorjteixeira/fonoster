@@ -45,10 +45,12 @@ const context = ({
   idleTimeoutCount: 0,
   maxSpeechWaitTimeout: input.conversationSettings.maxSpeechWaitTimeout,
   allowUserBargeIn: input.conversationSettings.allowUserBargeIn,
-  isSpeaking: false,
   sessionStartTime: Date.now(),
   maxSessionDuration: input.conversationSettings.maxSessionDuration,
-  initialDtmf: input.conversationSettings.initialDtmf
+  initialDtmf: input.conversationSettings.initialDtmf,
+  previousState: null,
+  hasLateSpeech: false,
+  isFirstTurn: true
 });
 
 export { context };

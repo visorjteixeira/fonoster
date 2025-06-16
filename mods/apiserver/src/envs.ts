@@ -21,7 +21,7 @@ import { join } from "path";
 import { assertEnvsAreSet } from "@fonoster/common";
 import dotenv from "dotenv";
 
-if (process.env.NODE_ENV === "dev") {
+if (process.env.NODE_ENV === "development") {
   dotenv.config({ path: join(__dirname, "..", "..", "..", ".env") });
 }
 
@@ -41,7 +41,6 @@ assertEnvsAreSet([
   "APISERVER_IDENTITY_DATABASE_URL",
   "APISERVER_IDENTITY_WORKSPACE_INVITE_URL",
   "APISERVER_IDENTITY_WORKSPACE_INVITE_FAIL_URL",
-  "APISERVER_IDENTITY_RESET_PASSWORD_URL",
   "APISERVER_DATABASE_URL",
   "APISERVER_INFLUXDB_URL",
   "APISERVER_INFLUXDB_INIT_USERNAME",
@@ -128,9 +127,6 @@ export const IDENTITY_REFRESH_TOKEN_EXPIRES_IN =
 
 export const IDENTITY_WORKSPACE_INVITE_FAIL_URL =
   e.APISERVER_IDENTITY_WORKSPACE_INVITE_FAIL_URL;
-
-export const IDENTITY_RESET_PASSWORD_URL =
-  e.APISERVER_IDENTITY_RESET_PASSWORD_URL;
 
 export const IDENTITY_WORKSPACE_INVITE_EXPIRATION =
   e.APISERVER_IDENTITY_WORKSPACE_INVITE_EXPIRATION || "1d";

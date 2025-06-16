@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { STASIS_APP_NAME } from "@fonoster/common";
+import { CALL_CONTEXT, CALL_EXTENSION } from "@fonoster/common";
 import { getLogger } from "@fonoster/logger";
 import ariClient from "ari-client";
 import { connect } from "nats";
@@ -76,9 +76,9 @@ async function createCreateCallSubscriber(config: CallManagerConfig) {
         ...msg.json()
       });
 
-      await ariConn.channels.originateWithId({
-        channelId: ref,
-        app: STASIS_APP_NAME,
+      await ariConn.channels.originate({
+        context: CALL_CONTEXT,
+        extension: CALL_EXTENSION,
         endpoint: `PJSIP/${ASTERISK_TRUNK}/sip:${to}@${ASTERISK_SYSTEM_DOMAIN}`,
         timeout,
         variables: {

@@ -34,10 +34,16 @@ type ButtonVariant = Omit<
   "text"
 >;
 
-export interface ButtonAttributes
-  extends Partial<ButtonProps>,
-    Partial<ButtonVariant> {
+export interface ButtonAttributes {
   children?: React.ReactNode;
+  size?: ButtonProps["size"];
+  variant?: ButtonProps["variant"];
+  disabled?: boolean;
+  type?: ButtonProps["type"];
+  isFullWidth?: boolean;
+  onClick?: ButtonProps["onClick"];
+  endIcon?: ButtonProps["endIcon"];
+  startIcon?: ButtonProps["startIcon"];
 }
 
 const sizeStyles = (size: ButtonProps["size"]): CSSObject => {
@@ -112,6 +118,7 @@ export const StyledButton = styled(Button)<ButtonAttributes>(
       overflow: "hidden",
       textOverflow: "ellipsis",
       textDecoration: "none",
+      minWidth: "fit-content",
       ...sizeStyles(size)
     },
     ...variantStyles(variant, theme)

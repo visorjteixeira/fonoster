@@ -1,4 +1,17 @@
 services:
+  dashboard:
+    image: fonoster/dashboard:latest
+    restart: unless-stopped
+    expose:
+      - 3030:3030
+    environment:
+      - DASHBOARD_API_URL
+      - DASHBOARD_AUTH_GITHUB_ENABLED
+      - DASHBOARD_AUTH_GITHUB_CLIENT_ID
+      - DASHBOARD_AUTH_GITHUB_URL
+      - DASHBOARD_EDITION
+      - SERVER_DASHBOARD_SESSION_SECRET
+
   apiserver:
     image: fonoster/apiserver:latest
     restart: unless-stopped
@@ -20,7 +33,6 @@ services:
       - APISERVER_IDENTITY_WORKSPACE_INVITE_EXPIRATION
       - APISERVER_IDENTITY_WORKSPACE_INVITE_FAIL_URL
       - APISERVER_IDENTITY_WORKSPACE_INVITE_URL
-      - APISERVER_IDENTITY_RESET_PASSWORD_URL
       - APISERVER_INFLUXDB_INIT_ORG
       - APISERVER_INFLUXDB_INIT_PASSWORD
       - APISERVER_INFLUXDB_INIT_TOKEN
@@ -164,7 +176,7 @@ services:
       - 4222
 
   envoy:
-    image: envoyproxy/envoy:v1.31.0
+    image: envoyproxy/envoy:v1.34.1
     restart: unless-stopped
     volumes:
       - ./config/envoy.yaml:/etc/envoy/envoy.yaml:ro

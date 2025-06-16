@@ -34,8 +34,14 @@ export type EventsHook = {
 
 export async function sendConversationEndedEvent(
   eventsHook: EventsHook,
-  chatHistory: Record<string, string>[]
+  data: {
+    chatHistory: Record<string, string>[];
+    phone: string;
+    appRef: string;
+    sessionRef: string;
+  }
 ) {
+  const { chatHistory, phone, appRef, sessionRef } = data;
   if (
     !eventsHook?.events.includes(EventsHookAllowedEvents.CONVERSATION_ENDED) &&
     !eventsHook?.events.includes(EventsHookAllowedEvents.ALL)
@@ -44,8 +50,11 @@ export async function sendConversationEndedEvent(
   }
 
   const parsedEventsHook = eventsHookSchema.parse(eventsHook);
-  const body = {
+  const params = {
     eventType: EventsHookAllowedEvents.CONVERSATION_ENDED,
+    appRef,
+    sessionRef,
+    phone,
     chatHistory
   };
 
@@ -55,14 +64,14 @@ export async function sendConversationEndedEvent(
       method: AllowedHttpMethod.POST,
       headers: parsedEventsHook.headers,
       waitForResponse: false,
-      body
+      params
     });
   } catch (e) {
     logger.warn("sending event", {
       url: parsedEventsHook.url,
       method: AllowedHttpMethod.POST,
       waitForResponse: false,
-      body
+      params
     });
   }
 }

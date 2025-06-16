@@ -17,11 +17,12 @@
  * limitations under the License.
  */
 import { and } from "xstate";
+import { assign } from "xstate";
 import { context } from "./context";
 import { machineSetup } from "./setup";
 
 const machine = machineSetup.createMachine({
-  /** @xstate-layout N4IgpgJg5mDOIC5QDMB2BBAkgYgB6wBcBDAsAOiOVICcAKAWXQA0B9AZQFE23MB5AORYARAKoAldABU+-AJTY0WANoAGALqJQABwD2sAJYF9O1JpC5EAWgBMAZgCcZWwEYAbAA4A7AFZXAFgd7F08AGhAAT0Rrbz8yFT8PFW8vPxVrV1dbAF8ssMVMMihqMDAjVChsVQ0kEF0DIxMzCwRnd2cnT3tXT1trdxUMttcwyIQg7zJ7Twzo+2drO29PHLyMAv0IABswbDYABQ4OAGEACXZJdDFJKrM6w2NTGub7FU8yd287Tz6-Hu7QiKITzuayTAa2TyeFStTp+awrED5MgbbZ4QgkciUGi0TBCAAyHBY0noHF4Ikk8iRKLANxqdwaj1AzRiKkmyWc9nc9heKlsrm8I0Qzhc7Xmc289msqXi3myuURa2RWx2+GIpAoVDAdFxBKJmBJZIpCkV1KUzmq2j090aT0QDjIHimwL8zjSSUygparUc-k+Cy6IL8fm8CKRBGoRFQ9Qe+nKkh0mGVlXUtytDKadvcsS6vX5WfctgC8U9zldjihwMlpc6nVDis2+kIYFQsag8ZEsC1uwOxzOYi4Ijx1xTdLTDwzCH87nemXsCUCrimfk9fNZ3J8cJ5LtSctWWDIDabLbjOg7XdVGI12J1hOJpPJlPrjdIx7bp871FplujNqZQtL06QrYyRSi80Q+CWKggmQniuhKvLeMK3y7gq+4AO5EPc5QAGI6NQbBaCUADGAAWkj6AAtmAOgAK4EN2hynOclzDhatRjr+5hCp4sQ9Euth8pyaT2J63ifGQSxpEGwaysB7h1uhmFlFAuH4YRYCkeRVG0fRF7qliWoMMw7A9kxADqWCSHqBoPsailYSpeEEcRZGUdRdFfuxP6MlxCB+FmTj+PO-RwkGnrRO0nwCZk8ytB8wIKQUWjUDoRFwAY5RntQYhgAAjjRcD0RAJjkLGABuOgANbkEiyWpelrZZTl+WFQg5WpSQDxVJ59LjraLTWAMTh9L4squiokqiXMMGdCBAzWEByzyrVKVpbAGVQE1eUFYQDG9sxVw9RxPnNMKfJkGd7gxUstjxCJgIIJWEluEGrjQtCi5+Dk8qoDoEBwGY+Spt5E42F4ThuF4vgBNywQlv4cR2HyYl+Dy3whstipFCUynA9aJ1WN0ZDpFMg0OINV0eJ6kquGQvydINO4+MBiVKtsePpv1Sygq4pauNYXTOEGUK2NT6R05CkrxLyzMY3uBThpG3mtvGibs6OIP9S8EldNLwYJFKbQlq606DcC-Kcv5iHwpj+6Hi+KvvlqHN9X+CBeKybRBEkLiZCjom8+8-RQYJtgfPJtsFBhDmqc5GmudpdEu5xp1E7zV19G96QJMuD2BDBUrzIuEKut0cuoQUJGRlANFaMnBMIDYSQOnYHKugtvzWCWAntMB3NW-yn2s3Va0bVtLWEPXE7OGJtiBdWV3eGkAmieD7jB1myPk0tORAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QDMB2BBAkgYgB6wBcBDAsAOiOVICcAKAWXQA0B9AZQFE23MB5AORYARAKoAldABU+-AJTY0WANoAGALqJQABwD2sAJYF9O1JpC5EAWgDMADgDsZFQDYATAFYAnLevuAjPYALIF+ADQgAJ6IHoFkrp5B9s6ezn6pzu7uAL5Z4YqYZFDUYGBGqFDYqhpIILoGRiZmFgh+tn5k1vYp9tauti7Obc7hUQievmQJzm5efq6uvvY5eRgF+hAANmDYbAAKHBwAwgAS7JLoYpJVZnWGxqY1zZ4qjrbuC-Z9gT3O9vYjiHstlckxcnXsKlaXUCrmWIHyZHWWzwhBI5EoNFomCEABkOCxpPQOLwRJJ5AikWBrjVbg0HqBmu5AipJu42t5PM8VNYMgCWtY-O05p4-F5XMyVIF3NY4RTNtt8MRSBQqGA6Ni8QTMESSWSFKtEfKlH5qto9HdGo9ENZArYyAF-P5fra+q4+YKFmQgv13EF-DypbKDRt9IQwKh9OVJDoRLA1Tt9kdTmIuCIcVd1DdzXSmohnLayLZnNZPIFi5zkkE+TyWZz7Ez4ipJX5mTLcvDg6HSBGozG49QUUr0ar1bj8YTiaTyZ2wz2oNHY2rqWb6vdcy1BXa-r5gYFnh56+6VMCvX4VF5uf7Pm2VlgyAB3Ih3coAMR01DYWhKAGMABaSfQAFswB0ABXAgEwOE4zguDNTVqbM1ytFoIQ6ZsgU5BZXC6YZIkQLx3ELIJXBUV0-kCIM70fZ8oDfD8vzAP8AOAsCIL2KDk1TdNlwQ1dLQZKwpUmOxviSFxmUFdw+Q+JxvilWw90WB1KIKaiylo99Px-f8gJA8DBzRFVMUYVh2KTFgAHUsEkLUdSnfUqKfdS6K0xidJY8CeNpJCBI3Wwtw+NJxl+YE3TwhBxRBbxbG8dxpji7xWhUsgtGoHRvzgAxykXagxDAABHUC4AgiATHISMADcdAAa3IBFUvSzLIygHK8sK4qEEq9KSHuKovMQ-jzEQOZ3g6QY-HGc9xjaPkLzIZk+m3ToQiCZKGoy2Aspa-s2qKwhIPMthzkufq+PpIb+R5e1rDsYtRR6SVPD5DCyCdYJnEhSFkgo9t6rSjattagq9rYxNoJTNg0zgrMzvXAIFK9CFBlLcTj2rPd7WvTpOm8Y9SxydtUB0CA4DMfIYYtc7mksQIJhcDxvF8AJgjCcKW08V65Liss5h6bxkqKEp1IpnNkMsX44krEiSxIotBj5TxXGcea-kVyVuXrXxkspEWfIu30QVSNJ4lSYIIWsBWlZVroSNbTXsl+mdu2ahd+11wbmgcFl2Wsc8BWLTJAlm1JC36Y8eWmtlkrU5qXIYpjdNY92qeGiXUiLPoPqVssg-CksOc+EIlfGewz1+B3bwKX8iHKUCtGT9dLBIwi3AFEVSMSMLRj8G72l8A3bTihKfsrlL-qa7KduB4qG+Q0VpTGwUgQyUibtmhxQ6bBSeWlRWlgJoA */
   context,
   id: "fnAI",
   initial: "greeting",
@@ -37,7 +38,7 @@ const machine = machineSetup.createMachine({
     },
 
     idle: {
-      entry: [{ type: "cleanSpeech" }, { type: "setSpeakingDone" }],
+      entry: [{ type: "cleanSpeech" }],
       on: {
         SPEECH_START: {
           target: "listeningToUser",
@@ -52,22 +53,14 @@ const machine = machineSetup.createMachine({
             guard: and(["idleTimeoutCountExceedsMax"])
           },
           {
-            target: "transitioningToIdle",
+            target: "idle",
             actions: [
               { type: "increaseIdleTimeoutCount" },
               { type: "announceIdleTimeout" }
-            ]
+            ],
+            reenter: true
           }
         ]
-      }
-    },
-
-    transitioningToIdle: {
-      // This intermediate state is necessary to ensure the IDLE_TIMEOUT
-      // event is properly reset and retriggered when returning to idle.
-      // Without it, the timer would not restart correctly.
-      always: {
-        target: "idle"
       }
     },
 
@@ -75,7 +68,7 @@ const machine = machineSetup.createMachine({
       entry: [
         { type: "interruptPlayback" },
         { type: "resetIdleTimeoutCount" },
-        { type: "setSpeaking" }
+        assign({ hasLateSpeech: false })
       ],
       on: {
         SPEECH_RESULT: {
@@ -90,7 +83,7 @@ const machine = machineSetup.createMachine({
       after: {
         IDLE_TIMEOUT: [
           {
-            target: "transitioningToIdle",
+            target: "idle",
             actions: [
               { type: "increaseIdleTimeoutCount" },
               { type: "announceIdleTimeout" }
@@ -106,6 +99,12 @@ const machine = machineSetup.createMachine({
           target: "listeningToUser",
           description: "User started speaking again.",
           guard: ({ context }) => context.allowUserBargeIn
+        },
+        SPEECH_RESULT: {
+          target: "waitingForSpeechTimeout",
+          description: "Capture late speech, but only once.",
+          guard: ({ context }) => !context.hasLateSpeech,
+          actions: [{ type: "appendSpeech" }, assign({ hasLateSpeech: true })]
         }
       },
       after: {
@@ -127,8 +126,27 @@ const machine = machineSetup.createMachine({
         SPEECH_START: {
           target: "listeningToUser",
           description: "Event from VAD or similar system.",
-          actions: [{ type: "cleanSpeech" }],
-          guard: ({ context }) => context.allowUserBargeIn
+          guard: ({ context }) => context.allowUserBargeIn,
+          // We assume that the user wants to steer the conversation
+          // back to the agent so we clean the speech buffer
+          actions: [{ type: "cleanSpeech" }]
+        },
+        SPEECH_RESULT: {
+          target: "processingUserRequest",
+          description:
+            "Capture only a single late speech across the entire request processing.",
+          guard: ({ context }) => !context.hasLateSpeech,
+          actions: [
+            { type: "interruptPlayback" },
+            { type: "appendSpeech" },
+            assign(({ self }) => {
+              return {
+                previousState: self.getSnapshot().value,
+                hasLateSpeech: true
+              };
+            })
+          ],
+          reenter: true
         }
       },
       invoke: {
@@ -138,7 +156,12 @@ const machine = machineSetup.createMachine({
         onDone: {
           target: "listeningToUser",
           reenter: true,
-          actions: [{ type: "cleanSpeech" }]
+          actions: [
+            { type: "cleanSpeech" },
+            assign({
+              isFirstTurn: false
+            })
+          ]
         }
       }
     }
