@@ -189,18 +189,6 @@ class VoiceClientImpl implements VoiceClient {
           return;
         }
 
-        // Send audio to client
-        if (text.startsWith("Stream:")) {
-          const streamBase64 = text.replace("Stream:", "");
-          this.transcriptionsStream.emit("response_audio", streamBase64);
-          this.sendResponse({
-            sayResponse: {
-              playbackRef: "Done Streaming"
-            }
-          });
-          return;
-        }
-
         // Record audio
         if (text.startsWith("Record:")) {
           const data = JSON.parse(text.replace("Record:", ""));
@@ -213,6 +201,20 @@ class VoiceClientImpl implements VoiceClient {
           return;
         }
       }
+      //@ts-ignore
+      const streamingAudio = data.playRequest?.url;
+      if (streamingAudio && streamingAudio.startsWith("Stream:")) {
+        // Send audio to client
+        const streamBase64 = streamingAudio.replace("Stream:", "");
+        this.transcriptionsStream.emit("response_audio", streamBase64);
+        this.sendResponse({
+          playResponse: {
+            sessionRef: this.config.sessionRef,
+            playbackRef: "Done Streaming"
+          }
+        });
+        return;
+      }
       callback(data[type]);
     });
   }
@@ -223,33 +225,38 @@ class VoiceClientImpl implements VoiceClient {
     maxDuration: number,
     maxSilence: number
   ) {
-    await this.ari.channels.record({
-      channelId: sessionRef,
-      format: RecordFormat.WAV,
-      name,
-      beep: false,
-      maxDurationSeconds: maxDuration,
-      maxSilenceSeconds: maxSilence
+    // Check if we have a bridge available
+    if (this.bridge && this.bridge.id) {
+      console.log("Recording bridge:", this.bridge.id);
+      // Record the bridge instead of individual channel
+      await this.ari.bridges.record({
+        bridgeId: this.bridge.id,
+        format: RecordFormat.WAV,
+        name,
+        beep: false,
+        maxDurationSeconds: maxDuration,
+        maxSilenceSeconds: maxSilence
+      });
+    } else {
+      this.sendResponse({
+        sayResponse: {
+          playbackRef: "Recording failed"
+        }
+      });
+      return;
+    }
+
+    this.sendResponse({
+      sayResponse: {
+        playbackRef: "Recording started"
+      }
     });
 
-    awaitForRecordingFinished(this.ari, name)
-      .then(({ duration }) => {
-        this.sendResponse({
-          sayResponse: {
-            playbackRef: JSON.stringify({
-              duration,
-              name
-            })
-          }
-        });
-      })
-      .catch(() => {
-        this.sendResponse({
-          sayResponse: {
-            playbackRef: "Recording failed"
-          }
-        });
-      });
+    try {
+      await awaitForRecordingFinished(this.ari, name);
+    } catch (_) {
+      console.log("Recording failed");
+    }
   }
 
   /**
@@ -270,13 +277,15 @@ class VoiceClientImpl implements VoiceClient {
     }
     // Get the call headers
     for (const header of headers) {
-      const channelVar = await this.ari.channels.getChannelVar({
-        channelId: sessionRef,
-        variable: `PJSIP_HEADER(read,${header})`
-      });
-      if (channelVar?.value) {
-        callHeaders[header] = channelVar?.value;
-      }
+      try {
+        const channelVar = await this.ari.channels.getChannelVar({
+          channelId: sessionRef,
+          variable: `PJSIP_HEADER(read,${header})`
+        });
+        if (channelVar?.value) {
+          callHeaders[header] = channelVar?.value;
+        }
+      } catch (error) {}
     }
     // Send the call headers to the client
     this.sendResponse({
