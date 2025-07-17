@@ -76,16 +76,26 @@ async function createCreateCallSubscriber(config: CallManagerConfig) {
         ...msg.json()
       });
 
+      const destinationSplitted = to.split("@");
+      const number = destinationSplitted[0];
+      const uri = destinationSplitted[1];
+
+      console.log("START OUTGOING CALL", {
+        number,
+        uri
+      });
+
       await ariConn.channels.originate({
         context: CALL_CONTEXT,
         extension: CALL_EXTENSION,
-        endpoint: `PJSIP/${ASTERISK_TRUNK}/sip:${to}@${ASTERISK_SYSTEM_DOMAIN}`,
+        endpoint: `PJSIP/${ASTERISK_TRUNK}/sip:${number}@${ASTERISK_SYSTEM_DOMAIN}`,
         timeout,
         variables: {
           "PJSIP_HEADER(add,X-Call-Ref)": ref,
           "PJSIP_HEADER(add,X-Dod-Number)": from,
           "PJSIP_HEADER(add,X-Access-Key-Id)": accessKeyId,
           "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true",
+          "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A",
           CALL_DIRECTION: "peer-to-pstn",
           INGRESS_NUMBER: from,
           APP_REF: appRef,

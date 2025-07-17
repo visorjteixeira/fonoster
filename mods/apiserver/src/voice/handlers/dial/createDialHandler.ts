@@ -49,14 +49,24 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
 
     const ref = uuidv4();
 
+    const destinationSplitted = destination.split("@");
+    const number = destinationSplitted[0];
+    const uri = destinationSplitted[1];
+
+    console.log("START REDIRECT CALL", {
+      number,
+      uri
+    });
+
     await dialed.originate({
       app: STASIS_APP_NAME,
-      endpoint: `PJSIP/${ASTERISK_TRUNK}/sip:${destination}@${ASTERISK_SYSTEM_DOMAIN}`,
+      endpoint: `PJSIP/${ASTERISK_TRUNK}/sip:${number}@${ASTERISK_SYSTEM_DOMAIN}`,
       timeout,
       variables: {
         "PJSIP_HEADER(add,X-Call-Ref)": ref,
         "PJSIP_HEADER(add,X-Dod-Number)": ingressNumber,
-        "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true"
+        "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true",
+        "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A"
       }
     });
 
