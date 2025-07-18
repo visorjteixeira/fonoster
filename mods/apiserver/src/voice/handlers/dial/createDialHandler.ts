@@ -80,10 +80,13 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
     // Gather all uri params
     const uriParamsMap: Record<string, string> = {};
     let transport = "UDP";
+    let from = ingressNumber;
     uriParams?.split("&").forEach((param) => {
       const [key, value] = param.split("=");
       if (key === "transport") {
         transport = value.toUpperCase();
+      } else if (key === "from") {
+        from = value;
       } else {
         uriParamsMap[`PJSIP_HEADER(add,${key})`] = value;
       }
@@ -94,7 +97,7 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
       uri,
       transport,
       port,
-      from: ingressNumber,
+      from,
       uriParamsMap
     });
 
@@ -104,7 +107,7 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
       timeout,
       variables: {
         "PJSIP_HEADER(add,X-Call-Ref)": ref,
-        "PJSIP_HEADER(add,X-Dod-Number)": ingressNumber,
+        "PJSIP_HEADER(add,X-Dod-Number)": from,
         "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true",
         "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A",
         "PJSIP_HEADER(add,X-DOD-TRANSPORT)": transport,
