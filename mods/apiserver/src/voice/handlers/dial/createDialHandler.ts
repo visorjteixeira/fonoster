@@ -26,6 +26,7 @@ import { createGetChannelVar } from "../../utils/createGetChannelVar";
 import { handleChannelLeftBridge } from "./handleChannelLeftBridge";
 import { handleStasisEnd } from "./handleStasisEnd";
 import { handleStasisStart } from "./handleStasisStart";
+import logger from "@fonoster/logger";
 
 // TODO: Needs request validation
 function createDialHandler(ari: Client, voiceClient: VoiceClient) {
@@ -49,13 +50,52 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
 
     const ref = uuidv4();
 
-    const destinationSplitted = destination.split("@");
-    const number = destinationSplitted[0];
-    const uri = destinationSplitted[1];
+    if (!destination) {
+      logger.error("to is required", { destination });
+      return;
+    }
+
+    const [sipAddress, uriParams] = destination.split("?");
+    if (!sipAddress) {
+      logger.error("sip address is required", { destination });
+      return;
+    }
+
+    const [address, port = "5060"] = sipAddress.split(":");
+    if (!address) {
+      logger.error("address is required", { destination });
+      return;
+    }
+
+    const [number, uri] = address.split("@");
+    if (!number) {
+      logger.error("number is required", { destination });
+      return;
+    }
+    if (!uri) {
+      logger.error("uri is required", { destination });
+      return;
+    }
+
+    // Gather all uri params
+    const uriParamsMap: Record<string, string> = {};
+    let transport = "UDP";
+    uriParams?.split("&").forEach((param) => {
+      const [key, value] = param.split("=");
+      if (key === "transport") {
+        transport = value.toUpperCase();
+      } else {
+        uriParamsMap[`PJSIP_HEADER(add,${key})`] = value;
+      }
+    });
 
     console.log("START REDIRECT CALL", {
       number,
-      uri
+      uri,
+      transport,
+      port,
+      from: ingressNumber,
+      uriParamsMap
     });
 
     await dialed.originate({
@@ -66,7 +106,10 @@ function createDialHandler(ari: Client, voiceClient: VoiceClient) {
         "PJSIP_HEADER(add,X-Call-Ref)": ref,
         "PJSIP_HEADER(add,X-Dod-Number)": ingressNumber,
         "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true",
-        "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A"
+        "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A",
+        "PJSIP_HEADER(add,X-DOD-TRANSPORT)": transport,
+        "PJSIP_HEADER(add,X-DOD-PORT)": port,
+        ...uriParamsMap
       }
     });
 

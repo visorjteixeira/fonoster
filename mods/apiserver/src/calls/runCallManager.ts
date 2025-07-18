@@ -76,13 +76,52 @@ async function createCreateCallSubscriber(config: CallManagerConfig) {
         ...msg.json()
       });
 
-      const destinationSplitted = to.split("@");
-      const number = destinationSplitted[0];
-      const uri = destinationSplitted[1];
+      if (!to) {
+        logger.error("to is required", { to });
+        return;
+      }
+
+      const [sipAddress, uriParams] = to.split("?");
+      if (!sipAddress) {
+        logger.error("sip address is required", { to });
+        return;
+      }
+
+      const [address, port = "5060"] = sipAddress.split(":");
+      if (!address) {
+        logger.error("address is required", { to });
+        return;
+      }
+
+      const [number, uri] = address.split("@");
+      if (!number) {
+        logger.error("number is required", { to });
+        return;
+      }
+      if (!uri) {
+        logger.error("uri is required", { to });
+        return;
+      }
+
+      // Gather all uri params
+      const uriParamsMap: Record<string, string> = {};
+      let transport = "UDP";
+      uriParams?.split("&").forEach((param) => {
+        const [key, value] = param.split("=");
+        if (key === "transport") {
+          transport = value.toUpperCase();
+        } else {
+          uriParamsMap[`PJSIP_HEADER(add,${key})`] = value;
+        }
+      });
 
       console.log("START OUTGOING CALL", {
         number,
-        uri
+        uri,
+        transport,
+        port,
+        from,
+        uriParamsMap,
       });
 
       await ariConn.channels.originate({
@@ -96,6 +135,12 @@ async function createCreateCallSubscriber(config: CallManagerConfig) {
           "PJSIP_HEADER(add,X-Access-Key-Id)": accessKeyId,
           "PJSIP_HEADER(add,X-Is-Api-Originated-Type)": "true",
           "PJSIP_HEADER(add,X-DOD-URI)": uri || "N/A",
+          "PJSIP_HEADER(add,X-DOD-TRANSPORT)": transport,
+          "PJSIP_HEADER(add,X-DOD-PORT)": port,
+          "PJSIP_HEADER(add,X-DOD-FROM)": from,
+          "PJSIP_HEADER(add,X-DOD-TO)": to,
+          "PJSIP_HEADER(add,X-DOD-DIRECTION)": "outbound",
+          ...uriParamsMap,
           CALL_DIRECTION: "peer-to-pstn",
           INGRESS_NUMBER: from,
           APP_REF: appRef,
